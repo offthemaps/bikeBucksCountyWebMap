@@ -1,0 +1,126 @@
+.arts, .attractions, .bandb, .bikeshop, .coveredbridge, .historic, .shopping, .wineorbeer, .icecream, .park {
+  border: none;
+  cursor: pointer;
+  height: 30px;
+  width: 20px;
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Park.svg");
+  background-color: rgba(0,0,0,0);
+  background-repeat: no-repeat;
+}
+
+.arts {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Arts.svg");
+}
+
+.attractions {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Attractions.svg");
+}
+
+.bandb {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/BB.svg");
+}
+
+.bikeshop {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Bicycle-Shop.svg");
+}
+
+.coveredbridge {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Covered-Bridge.svg");
+}
+
+.historic {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Historic.svg");
+}
+
+.shopping {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Shopping.svg");
+}
+
+.wineorbeer {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Wine-or-Beer.svg");
+}
+
+.icecream {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Ice-Cream.svg");
+}
+
+.artsB, .attractionsB, .bandbB, .bikeshopB, .coveredbridgeB, .historicB, .shoppingB, .wineorbeerB, .icecreamB, .parkB {
+  border-style: solid;
+  border-color: #124747;
+  border-radius: 15px;
+  cursor: pointer;
+  height: 6vh;
+  width: 5vw;
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Park.svg");
+  background-color: rgba(255,255,255,255);
+  background-position: center;
+  background-repeat: no-repeat;
+  right: 0px;
+}
+
+.artsB {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Arts.svg");
+}
+
+.attractionsB {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Attractions.svg");
+}
+
+.bandbB {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/BB.svg");
+}
+
+.bikeshopB {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Bicycle-Shop.svg");
+}
+
+.coveredbridgeB {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Covered-Bridge.svg");
+}
+
+.historicB {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Historic.svg");
+}
+
+.shoppingB {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Shopping.svg");
+}
+
+.wineorbeerB {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Wine-or-Beer.svg");
+}
+
+.icecreamB {
+  background-image: url("https://patrick-stephens-p3x5.squarespace.com/s/Ice-Cream.svg");
+}
+
+.vert-btn-group button {
+  cursor: pointer;
+  display: block;
+  margin-top: 5%;
+}
+
+.vert-btn-group button:hover {
+    background-color: black !important;
+    border: none;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-left: 6px;
+}
+
+.mapboxgl-popup-content {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #124747 !important;
+  border-radius: 15px !important;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: #124747 !important;
+}

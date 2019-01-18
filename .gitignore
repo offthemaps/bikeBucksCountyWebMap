@@ -1,0 +1,9 @@
+# exclude our demos
+other
+
+# exclude non-SVG images
+*.png
+*.jpg
+
+# exclude HTML since hosted on OTM
+*.html
