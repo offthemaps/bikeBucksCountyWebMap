@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <link href="https://patrick-stephens-p3x5.squarespace.com/s/stylesheet.css" rel="stylesheet" type="text/css" />
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
+  <script src="https://unpkg.com/@mapbox/mapbox-sdk/umd/mapbox-sdk.js"></script>
+  <script src="https://unpkg.com/@mapbox/mapbox-sdk/umd/mapbox-sdk.min.js"></script>
+  <!-- Loads the jQuery CDN for parsing our JSON -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <body>
+    <div id='map' style='width: 100%; height: 95vh; z-index: 0'>
+      <a href="http://bikebuckscounty.com/">
+        <img src="/s/logo.svg" style='position: absolute; left: 0px; top: 0px; height: 20vh; width: 15vw background-repeat: no-repeat; z-index: 1; border: 0'>
+      </a>
+      <div style='position: absolute; right: 0px; margin-right: 15px; top: 10%; z-index: 1' class='vert-btn-group'>
+        <button onclick='switchVisibility(arts, this.id)' class="artsB" title="Arts"></button>
+        <button onclick='switchVisibility(attractions, this.id)' class="attractionsB" title="Attractions"></button>
+        <button onclick='switchVisibility(bandb, this.id)' class="bandbB" title="Bed & Breakfast"></button>
+        <button onclick='switchVisibility(bicycleShops, this.id)' class="bikeshopB" title="Bicycle Shops"></button>
+        <button onclick='switchVisibility(coveredBridges, this.id)' class="coveredbridgeB" title="Covered Bridges"></button>
+        <button onclick='switchVisibility(historic, this.id)' class="historicB" title="Historical"></button>
+        <button onclick='switchVisibility(parks, this.id)' class="parkB" title="Parks"></button>
+        <button onclick='switchVisibility(shopping, this.id)' class="shoppingB" title="Shopping"></button>
+        <button onclick='switchVisibility(wineOrBeer, this.id)' class="wineorbeerB" title="Wine or Beer"></button>
+        <button onclick='switchVisibility(iceCream, this.id)' class="icecreamB" title="Ice Cream"></button>
+      </div>
+    </div>
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1Ijoic3BhdHJpY2s0NjciLCJhIjoiTVNaNG1OWSJ9.gq6641R9QJG5jWyO5tKIJw';
+
+      // Placeholder for our json data
+      var bbcFeatures = {};
+
+      // Parsed data
+      var jsonURL = "https://raw.githubusercontent.com/offthemaps/bikeBucksCountyWebMap/c86c8cb3020509d4fdd7bfa0ef7618b870ac85b4/amenities.geojson"; // Link to our geoJSON
+
+      $.getJSON({
+        dataType: "json",
+        url: jsonURL,
+        success: function(data) {
+          console.log("Data successfully loaded.");
+          bbcFeatures = data;
+          console.log(bbcFeatures);
+        },
+        error: function(xhr) {
+          alert(xhr.statusText)
+          console.log("Data could not be loaded.");
+        }
+      });
+
+      // Containers for different types of features, pre-filters on read instead
+      // of querying. Should have higher performance (?)
+      var arts = [];
+      var attractions = [];
+      var bandb = [];
+      var bicycleShops = [];
+      var coveredBridges = [];
+      var historic = [];
+      var parks = [];
+      var shopping = [];
+      var wineOrBeer = [];
+      var iceCream = [];
+
+      // Map creation and style loading
+      var map = new mapboxgl.Map ({
+        container: 'map',
+        style: 'mapbox://styles/spatrick467/cjomo65n728oc2rp6dmp65xix',
+        zoom: 8.8,
+        center: [-75.108466, 40.371885]
+      });
+
+      //    --\-/--     HELPER FUNCTIONS    --\-/--     //
+
+      /**
+       * Centers the map on the current feature, designated by a click event.
+       * @param {feature} currentFeature The clicked feature
+       */
+      function centerMap(currentFeature) {
+        map.flyTo({
+          center: currentFeature.geometry.coordinates,
+          zoom: 13
+        })
+      }
+
+      /**
+       * Creates a popup on the clicked feature.
+       * @param {feature} currentFeature The clicked feature
+       */
+      function createPopUp(currentFeature) {
+        var currentPopUps = document.getElementsByClassName('mapboxgl-popup');
+
+        // Remove pre-existing popups
+        if (currentPopUps[0]) currentPopUps[0].remove();
+
+        // String to hold the text created by our helper function
+        var description = createDescription(currentFeature);
+
+        // Various constants previously decided based on style
+        var popUp = new mapboxgl.Popup({ closeOnClick: false, offset: 25 })
+          .setLngLat(currentFeature.geometry.coordinates)
+          .setHTML(description)
+          .addTo(map)
+      }
+
+      /**
+       * Builds a string description for the popup text.
+       * @param {feature} currentFeature The clicked feature
+       * @return {string} The popup description
+       */
+      function createDescription(currentFeature) {
+        var description = "";
+
+        // Title
+        description += "<font size='4' style='color: #134C49; font-family: Arial; margin-top: 0px; margin-bottom: 0px;'><b>" + currentFeature.properties.name + "</b><br></h2>";
+
+        // Phone, does not print if no number found
+        if (currentFeature.properties.phone !== null) {
+          description += "<font size='3' style='color: #134C49; font-family: Arial; margin-top: 0px; margin-bottom: 0px;'>" + currentFeature.properties.phone + "<br></h4>";
+        }
+
+        // Website, does not print if no site found
+        if (currentFeature.properties.website !== null) {
+          description += "<a href='" + currentFeature.properties.website + "' target='_blank' style='color: #134C49; font-family: Arial; margin-top: 0px; margin-bottom: 0px;'>" + "Website" + "</a><br>";
+        }
+
+        // Address
+        var addressLink = "https://www.google.com/maps/search/?api=1&query=" + createAddressLink(currentFeature.properties.name);
+        var linkText = "";
+        if (currentFeature.properties.address !== null) {
+          linkText = currentFeature.properties.address;
+        } else {
+          linkText = "Unknown Address";
+        }
+
+        description += "<a href='" + addressLink + "' target='_blank' style='color: #134C49; font-family: Arial; margin-top: 0px; margin-bottom: 0px;'>" + linkText + "</a>";
+
+        return description;
+      }
+
+      /**
+       * Builds a string to pass into a Google Maps query
+       * @param {feature.address} address The address member of a feature
+       * @return {string} A formatted version of the address member
+       */
+      function createAddressLink(address) {
+        var result = "";
+
+        // splits the address into an array of words
+        var parsedAddress = address.split(" ");
+
+        // build a string according to query standards
+        parsedAddress.forEach(function(word) {
+          result += word + "+";
+        });
+
+        result += "Bucks+County+Pennsylvania";
+
+        return result;
+      }
+
+      /**
+       * Toggles the visibility of all features of the given type and its
+       * respective button.
+       * @param {type} type The feature type
+       * @param {id} clicked_button The id of the clicked button
+       */
+      function switchVisibility(type, clicked_button) {
+        var visibilityFlag = 0; // default to not visible, prevents multiple color toggles
+
+        type.forEach(function(feature) {
+          var visibility = feature.style.visibility;
+
+          // Toggles visibility based on current value for each feature
+          if (visibility === "visible") {
+            feature.style.visibility = "hidden";
+            visibilityFlag = 0;
+          } else {
+            feature.style.visibility = "visible";
+            visibilityFlag = 1;
+          }
+        });
+
+        // Swaps the button color for activeness
+        document.getElementById(clicked_button).style.backgroundColor =
+                ( visibilityFlag ) ? "rgba(255,142,55,0.85)" : "rgba(255,255,255,1)";
+      }
+
+      //    ==/=\==     END of HELPER FUNCTIONS     ==/=\==     //
+
+      // Executes upon map load
+      map.on('load', function(e) {
+        // Iterate through each feature and apply it to the map, based
+        // on the given coordinates and other attributes
+
+        bbcFeatures.features.forEach(function(marker) {
+
+          // Encapsulate the feature within a div element
+          var element = document.createElement('div');
+          // Set default visibility for button to work correctly
+          element.style.visibility = "hidden";
+          // Applys the aforementioned styling to the feature marker
+          element.className = 'park';
+
+          // Sort upon loading
+          switch(marker.properties.type) {
+            case "Arts":
+              element.className = 'arts';
+              arts.push(element);
+              break;
+            case "Attractions":
+              element.className = 'attractions';
+              attractions.push(element);
+              break;
+            case "Historic":
+              element.className = 'historic';
+              historic.push(element);
+              break;
+            case "Park":
+              parks.push(element);
+              break;
+            case "Shopping":
+              element.className = 'shopping';
+              shopping.push(element);
+              break;
+            case "B&B":
+              element.className = 'bandb';
+              bandb.push(element);
+              break;
+            case "Bicycle Shop":
+              element.className = 'bikeshop';
+              bicycleShops.push(element);
+              break;
+            case "Covered Bridge":
+              element.className = 'coveredbridge';
+              coveredBridges.push(element);
+              break;
+            case "Wine or Beer":
+              element.className = 'wineorbeer';
+              wineOrBeer.push(element);
+              break;
+            case "Ice Cream":
+              element.className = 'icecream';
+              iceCream.push(element);
+              break;
+          }
+
+          // Create marker for the feature with offset for placement
+          new mapboxgl.Marker(element, { offset: [0, -15] })
+            .setLngLat(marker.geometry.coordinates)
+            .addTo(map);
+
+          // Handle's user input
+          element.addEventListener('click', function(e) {
+            var activeItem = document.getElementsByClassName('active');
+
+            // Centers the map on click
+            centerMap(marker);
+
+            // Create informational popup
+            createPopUp(marker);
+          });
+        });
+      });
+
+    </script>
+  </body>
+</head>
+
+</html>
